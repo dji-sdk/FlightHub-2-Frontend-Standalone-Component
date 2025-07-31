@@ -1,0 +1,209 @@
+<!-- 接入步骤：
+
+* 示例中的 ip 地址 127.0.0.1 替换成实际用户服务地址 *
+
+- 接入步骤 1 - 添加组件容器样式
+- 接入步骤 2 - 在 HEAD 中引入 paas.js
+- 接入步骤 3 - 提供组件所在的容器
+- 接入步骤 4 - 使用组件前初始化配置
+- 接入步骤 5 - 加载组件
+
+- 接入步骤 6（按需） - 自定义地图元素
+- 接入步骤 7（按需） - 自定义主题
+- 接入步骤 8（按需） - 监听组件事件
+
+具体步骤请查看下方 demo 里标明的各个地方 -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayline</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .btn-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+        }
+    </style>
+
+    <!-- ******* 接入步骤 1 - START：添加组件容器样式 *******  -->
+    <style>
+        .fh2-container {
+            display: flex;
+            flex-direction: column;
+            /* 设置成你想要加载组件所在容器的宽高 */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #project-app-container>div,
+        .map-app-container>div {
+            width: 100%;
+            height: 100%;
+        }
+
+        .project-details {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex: 1;
+            overflow: auto;
+        }
+
+        .project-details .right-micro-app {
+            position: relative;
+            display: flex;
+            flex: 1;
+        }
+
+        .project-details .right-micro-app .maps-micro-app {
+            display: flex;
+            flex: 1;
+        }
+
+        .project-details .right-micro-app .map-app-placeholder {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-details .right-micro-app .map-app-container {
+            height: 100%;
+        }
+
+        .project-details .right-micro-app #wayline-app-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+    <!-- ******* 接入步骤 1 - END：添加组件容器样式 *******  -->
+
+     <!-- ******* 接入步骤 2 - START：引入 paas.js（具体域名地址请按实际替换） ******* -->
+    <script src="http://127.0.0.1/paas.js" fh2></script>
+    <!-- ******* 接入步骤 2 - END：引入 paas.js（具体域名地址请按实际替换） ******* -->
+
+    <!-- ******* 接入步骤 7（按需） - START：自定义主题 ******* -->
+    <link href="./custom-style.css" rel="stylesheet">
+    <!-- ******* 接入步骤 7（按需） - END：自定义主题 ******* -->
+</head>
+
+<body>
+    <!-- ******* 接入步骤 3 - START：提供组件所在的容器 ******* -->
+    <div class="fh2-container">
+        <div id="wayline-header"></div>
+        <div class="project-details">
+            <div id="project-app-container"></div>
+            <div id="project-middle-container"></div>
+            <div id="project-right-micro-app" class="right-micro-app">
+                <div class="maps-micro-app">
+                    <div id="project-map-app-placeholder" class="map-app-placeholder">
+                        <div id="map-app-global" class="map-app-container"></div>
+                    </div>
+                </div>
+                <div id="wayline-app-container"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ******* 接入步骤 3 - END：提供组件所在的容器 ******* -->
+
+    <script>
+        const ip = '127.0.0.1'
+        window.addEventListener('load', function () {
+            // ******* 接入步骤 4 - START：使用组件前初始化配置（具体配置参数请按实际替换） *******
+            window.FH2.initConfig({
+                serverUrl: `http://${ip}:30812`,
+                wssUrl: `ws://${ip}:30812/duplex/web`,
+                hostUrl: `http://${ip}`,
+                prjId: '', // 项目 id，按实际传入
+                projectToken: '' // 组织密钥，按实际传入
+            })
+            // ******* 接入步骤 4 - END：使用组件前初始化配置（具体配置参数请按实际替换） *******
+
+            // ******* 接入步骤 5 - START：加载组件，传入航线ID *******
+            window.FH2.loadWayline("wayline-app-container", {
+                wayline_id: '', // 航线 id
+            })
+            // ******* 接入步骤 5 - END：加载组件，传入航线ID *******
+        })
+    </script>
+
+
+    <div class="btn-bar">
+        <button id="CesiumMapBtn" onclick="addCustomCesiumData()">地图定制</button>
+        <button onclick="changeTheme()">样式定制</button>
+    </div>
+
+    <!-- ******* 接入步骤 6（按需） - START：自定义地图元素（此为例子，具体使用场景请按实际） ******* -->
+    <script>
+        const CesiumMapBtn = document.getElementById('CesiumMapBtn')
+        CesiumMapBtn.style.display = 'none'
+        // 等地图实例准备好了，再展示地图定制按钮
+        window.addEventListener('load', function () {
+            window.FH2.subscribe('cesium-viewer-change', (key) => {
+                if (window.FH2.cesiumViewer.global) {
+                    CesiumMapBtn.style.display = 'inline-block'
+                }
+            })
+        })
+        // 示例：定制地图，给地图添加自定义文本
+        function addCustomCesiumData() {
+            for (const key in window.FH2.cesiumViewer) {
+                if (Object.prototype.hasOwnProperty.call(window.FH2.cesiumViewer, key)) {
+                    const ins = window.FH2.cesiumViewer[key].entities.add({
+                        position: window.Cesium.Cartesian3.fromDegrees(113.93, 22.57, 50),
+                        label: {
+                            text: "用户自定义文本",
+                        },
+                    })
+                }
+            }
+        }
+    </script>
+    <!-- ******* 接入步骤 6（按需） - END：自定义地图元素（此为例子，具体使用场景请按实际） ******* -->
+
+    <!-- ******* 接入步骤 7（按需） - START：自定义主题 ******* -->
+    <script>
+        function changeTheme() {
+            document.body.className = document.body.className ? '' : 'set-change-color'
+        }
+    </script>
+    <!-- ******* 接入步骤 7（按需） - END：自定义主题 ******* -->
+
+    <!-- ******* 接入步骤 8（按需） - START：监听组件事件 ******* -->
+    <script>
+        window.addEventListener('load', function () {
+            window.FH2.subscribe('wayline-cancel', () => {
+                console.log('取消保存航线')
+            })
+            window.FH2.subscribe('wayline-save', () => {
+                console.log('保存航线')
+            })
+            window.FH2.subscribe('wayline-back', () => {
+                console.log('退出航线编辑器')
+            })
+        })
+    </script>
+    <!-- ******* 接入步骤 8（按需） - END：监听组件事件 ******* -->
+</body>
+
+</html>

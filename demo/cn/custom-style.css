@@ -1,0 +1,28 @@
+/* 接入步骤 8（按需） - 自定义主题 */
+body.set-change-color {
+  /* 第一基础底色 */
+  --fh2-basic-bg-color: #141b2d;
+  --fh2-sub-bg-color: #171f34;
+
+  /* 按钮、卡片 亮色 */
+  --fh2-primary-color: #4cceac;
+  --fh2-primary-hover-color: #50dcd8;
+  --fh2-primary-focus-color: #3bbfae;
+  --fh2-primary-disabled-color: #2f7764;
+
+  /* 大面积的选中态，增加透明度 */
+  --fh2-list-primary-active-color: rgba(76, 206, 172, 0.4);
+  --fh2-list-primary-hover-color: rgba(80, 220, 216, 0.4);
+
+  /* 按钮、卡片非亮色 */
+  --fh2-sub-primary-color: #1f2a40;
+  /* 非亮色 hover 颜色 */
+  --fh2-sub-primary-hover-color: rgb(49 59 79);
+
+  /* 弹窗内容色 */
+  --fh2-model-content-bg-color: #0e1321;
+
+  /* input */
+  --fh2-input-highlight-color: #0a0f1a;
+  --fh2-input-border-color: #293652;
+}

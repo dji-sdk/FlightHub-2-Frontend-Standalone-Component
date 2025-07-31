@@ -1,0 +1,107 @@
+<!-- Steps:
+
+* Replace the IP address 127.0.0.1 in the example with the actual service address *
+
+- Step 1 - Load the paas.js file
+- Step 2 - Provide a container for the component
+- Step 3 - Initialize configuration before loading the component
+- Step 4 - Load the component
+
+- Step 5 (optional) - Listen to component events
+- Step 6 (optional) - Customize theme
+
+Please refer to the example below for details -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayline Creation</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .btn-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+        }
+    </style>
+
+     <!-- ******* Step 1 - START: Load the paas.js File (replace with the actual domain address) ******* -->
+    <script src="http://127.0.0.1/paas.js" fh2></script>
+    <!-- ******* Step 1 - END: Load the paas.js File (replace with the actual domain address) ******* -->
+
+    <!-- ******* Step 6 (Optional) - START: Customize Theme ******* -->
+    <link href="./custom-style.css" rel="stylesheet">
+    <!-- ******* Step 6 (Optional) - END: Customize Theme ******* -->
+</head>
+
+<body>
+    <!-- ******* Step 2 - START: Provide a Container for the Component ******* -->
+    <div id="wayline-create-app-container"></div>
+    <!-- ******* Step 2 - END: Provide a Container for the Component ******* -->
+
+    <script>
+        const ip = '127.0.0.1'
+        window.addEventListener('load', function () {
+            // ******* Step 3 - START: Initialize Configuration Before Loading the Component (replace parameters as needed) *******
+            window.FH2.initConfig({
+                serverUrl: `http://${ip}:30812`,
+                wssUrl: `ws://${ip}:30812/duplex/web`,
+                hostUrl: `http://${ip}`,
+                prjId: '', // Project ID, replace with the actual project ID
+                projectToken: '' // Organization token, replace with the actual organization token
+            })
+            // ******* Step 3 - END: Initialize Configuration Before Loading the Component (replace parameters as needed) *******
+
+            // ******* Step 4 - START: Load the Component *******
+            window.FH2.loadWaylineCreation("wayline-create-app-container")
+            // ******* Step 4 - END: Load the Component *******
+        })
+    </script>
+
+    <!-- ******* Step 5 (Optional) - START: Add Event Listener ******* -->
+    <script>
+        window.addEventListener('load', function () {
+            window.FH2.subscribe('wayline-creation-saved', () => {
+                window.alert('Flight route created successfully')
+            })
+            window.FH2.subscribe('wayline-creation-cancel', () => {
+                window.alert('Flight route creation canceled')
+            })
+        })
+    </script>
+    <!-- ******* Step 5 (Optional) - END: Add Event Listener ******* -->
+
+
+    <div class="btn-bar">
+        <button onclick="openCreate()">Open Component</button>
+        <button onclick="changeTheme()">Customize Style</button>
+    </div>
+
+    <script>
+        function openCreate() {
+            window.FH2.loadWaylineCreation("wayline-create-app-container")
+        }
+
+        // ******* Step 6 (Optional) - START: Customize Theme
+        function changeTheme() {
+            document.body.className = document.body.className ? '' : 'set-change-color'
+        }
+        // ******* Step 6 (Optional) - END: Customize Theme
+    </script>
+</body>
+
+</html>
