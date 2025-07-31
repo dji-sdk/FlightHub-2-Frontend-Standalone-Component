@@ -1,0 +1,28 @@
+/* Step 8 (Optional) - Customize Theme */
+body.set-change-color {
+  /* Background color */
+  --fh2-basic-bg-color: #141b2d;
+  --fh2-sub-bg-color: #171f34;
+
+  /* Primary theme color */
+  --fh2-primary-color: #4cceac;
+  --fh2-primary-hover-color: #50dcd8;
+  --fh2-primary-focus-color: #3bbfae;
+  --fh2-primary-disabled-color: #2f7764;
+
+  /* Selected state color */
+  --fh2-list-primary-active-color: rgba(76, 206, 172, 0.4);
+  --fh2-list-primary-hover-color: rgba(80, 220, 216, 0.4);
+
+  /* Sub-theme color */
+  --fh2-sub-primary-color: #1f2a40;
+  /* Sub-theme hover color */
+  --fh2-sub-primary-hover-color: rgb(49 59 79);
+
+  /* Dialog modal background color */
+  --fh2-model-content-bg-color: #0e1321;
+
+  /* Input color */
+  --fh2-input-highlight-color: #0a0f1a;
+  --fh2-input-border-color: #293652;
+}

@@ -1,0 +1,106 @@
+<!-- Steps:
+
+* Replace the IP address 47.96.144.147 in the example with the actual service address *
+
+- Step 1 - Load the paas.js file
+- Step 2 - Provide a container for the component
+- Step 3 - Initialize configuration before loading the component
+- Step 4 - Load the component
+
+- Step 5 (optional) - Listen to component events
+- Step 6 (optional) - Customize theme
+
+Please refer to the example below for details -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayline Creation</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .btn-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+        }
+    </style>
+
+     <!-- ******* Step 1 - START: Load the paas.js File (replace with the actual domain address) ******* -->
+    <script src="http://47.96.144.147/paas.js" fh2></script>
+    <!-- ******* Step 1 - END: Load the paas.js File (replace with the actual domain address) ******* -->
+
+    <!-- ******* Step 6 (Optional) - START: Customize Theme ******* -->
+    <link href="./custom-style.css" rel="stylesheet">
+    <!-- ******* Step 6 (Optional) - END: Customize Theme ******* -->
+</head>
+
+<body>
+    <!-- ******* Step 2 - START: Provide a Container for the Component ******* -->
+    <div id="wayline-create-app-container"></div>
+    <!-- ******* Step 2 - END: Provide a Container for the Component ******* -->
+
+    <script>
+        window.addEventListener('load', function () {
+            // ******* Step 3 - START: Initialize Configuration Before Loading the Component (replace parameters as needed) *******
+            window.FH2.initConfig({
+                serverUrl: 'http://47.96.144.147:30812',
+                wssUrl: 'ws://47.96.144.147:30812/duplex/web',
+                hostUrl: 'http://47.96.144.147',
+                prjId: 'f10e3a91-4b82-4fd4-9b90-3919292d9256',
+                projectToken: 'eyJhbGciOiJIUzUxMiIsImNyaXQiOlsidHlwIiwiYWxnIiwia2lkIl0sImtpZCI6IjU3YmQyNmEwLTYyMDktNGE5My1hNjg4LWY4NzUyYmU1ZDE5MSIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoicGsiLCJleHAiOjIwNTQ5NjU5NTksIm5iZiI6MTczOTQzMzE1OSwib3JnYW5pemF0aW9uX3V1aWQiOiI4ZDcyZDU0Mi1mOTY2LTQ0N2QtODVjNi1jNDQwMjYzY2E2MTIiLCJwcm9qZWN0X3V1aWQiOiIiLCJzdWIiOiJmaDIiLCJ1c2VyX2lkIjoiMTczNjg1Nzc3OTMwNDQzMDc1MiJ9.ZckIr0npto1uarIbBAf3HQPUppUQZR5h8yaDf5m01zarjVOjNnvVGOlTTVYioxt5h45yYBWviNi9nZlp_E4YZw '
+            })
+            // ******* Step 3 - END: Initialize Configuration Before Loading the Component (replace parameters as needed) *******
+
+            // ******* Step 4 - START: Load the Component *******
+            window.FH2.loadWaylineCreation("wayline-create-app-container")
+            // ******* Step 4 - END: Load the Component *******
+        })
+    </script>
+
+    <!-- ******* Step 5 (Optional) - START: Add Event Listener ******* -->
+    <script>
+        window.addEventListener('load', function () {
+            window.FH2.subscribe('wayline-creation-saved', () => {
+                window.alert('Flight route created successfully')
+            })
+            window.FH2.subscribe('wayline-creation-cancel', () => {
+                window.alert('Flight route creation canceled')
+            })
+        })
+    </script>
+    <!-- ******* Step 5 (Optional) - END: Add Event Listener ******* -->
+
+
+    <div class="btn-bar">
+        <button onclick="openCreate()">Open Component</button>
+        <button onclick="changeTheme()">Customize Style</button>
+    </div>
+
+    <script>
+        function openCreate() {
+            window.FH2.loadWaylineCreation("wayline-create-app-container")
+        }
+
+        // ******* Step 6 (Optional) - START: Customize Theme
+        function changeTheme() {
+            document.body.className = document.body.className ? '' : 'set-change-color'
+        }
+        // ******* Step 6 (Optional) - END: Customize Theme
+    </script>
+</body>
+
+</html>

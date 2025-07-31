@@ -1,0 +1,208 @@
+<!-- Steps:
+
+* Replace the IP address 47.96.144.147 in the example with the actual service address *
+
+- Step 1 - Add the component container style
+- Step 2 - Load the paas.js file
+- Step 3 - Provide a container for the component
+- Step 4 - Initialize configuration before loading the component
+- Step 5 - Load the component
+
+- Step 6 (optional) - Customize map elements
+- Step 7 (optional) - Customize theme
+- Step 8 (optional) - Add Event listener
+
+Please refer to the example below for details -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayline</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .btn-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+        }
+    </style>
+
+    <!-- ******* Step 1 - START: Add the Component Container Style *******  -->
+    <style>
+        .fh2-container {
+            display: flex;
+            flex-direction: column;
+            /* Set the width and height of the container where you want to load the component */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #project-app-container>div,
+        .map-app-container>div {
+            width: 100%;
+            height: 100%;
+        }
+
+        .project-details {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex: 1;
+            overflow: auto;
+        }
+
+        .project-details .right-micro-app {
+            position: relative;
+            display: flex;
+            flex: 1;
+        }
+
+        .project-details .right-micro-app .maps-micro-app {
+            display: flex;
+            flex: 1;
+        }
+
+        .project-details .right-micro-app .map-app-placeholder {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-details .right-micro-app .map-app-container {
+            height: 100%;
+        }
+
+        .project-details .right-micro-app #wayline-app-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+    <!-- ******* Step 1 - END: Add the Component Container Style *******  -->
+
+     <!-- ******* Step 2 - START: Load the paas.js File (replace with the actual domain address) ******* -->
+    <script src="http://47.96.144.147/paas.js" fh2></script>
+    <!-- ******* Step 2 - END: Load the paas.js File (replace with the actual domain address) ******* -->
+
+    <!-- ******* Step 7 (Optional) - START: Customize Theme ******* -->
+    <link href="./custom-style.css" rel="stylesheet">
+    <!-- ******* Step 7 (Optional) - END: Customize Theme ******* -->
+</head>
+
+<body>
+    <!-- ******* Step 3 - START: Provide a Container for the Component ******* -->
+    <div class="fh2-container">
+        <div id="wayline-header"></div>
+        <div class="project-details">
+            <div id="project-app-container"></div>
+            <div id="project-middle-container"></div>
+            <div id="project-right-micro-app" class="right-micro-app">
+                <div class="maps-micro-app">
+                    <div id="project-map-app-placeholder" class="map-app-placeholder">
+                        <div id="map-app-global" class="map-app-container"></div>
+                    </div>
+                </div>
+                <div id="wayline-app-container"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ******* Step 3 - END: Provide a Container for the Component ******* -->
+
+    <script>
+        window.addEventListener('load', function () {
+            // ******* Step 4 - START: Initialize Configuration Before Loading the Component (replace parameters as needed) *******
+            window.FH2.initConfig({
+                serverUrl: 'http://47.96.144.147:30812',
+                wssUrl: 'ws://47.96.144.147:30812/duplex/web',
+                hostUrl: 'http://47.96.144.147',
+                prjId: 'f10e3a91-4b82-4fd4-9b90-3919292d9256',
+                projectToken: 'eyJhbGciOiJIUzUxMiIsImNyaXQiOlsidHlwIiwiYWxnIiwia2lkIl0sImtpZCI6IjU3YmQyNmEwLTYyMDktNGE5My1hNjg4LWY4NzUyYmU1ZDE5MSIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoicGsiLCJleHAiOjIwNTQ5NjU5NTksIm5iZiI6MTczOTQzMzE1OSwib3JnYW5pemF0aW9uX3V1aWQiOiI4ZDcyZDU0Mi1mOTY2LTQ0N2QtODVjNi1jNDQwMjYzY2E2MTIiLCJwcm9qZWN0X3V1aWQiOiIiLCJzdWIiOiJmaDIiLCJ1c2VyX2lkIjoiMTczNjg1Nzc3OTMwNDQzMDc1MiJ9.ZckIr0npto1uarIbBAf3HQPUppUQZR5h8yaDf5m01zarjVOjNnvVGOlTTVYioxt5h45yYBWviNi9nZlp_E4YZw '
+            })
+            // ******* Step 4 - END: Initialize Configuration Before Loading the Component (replace parameters as needed) *******
+
+            // ******* Step 5 - START: Load the Component and Pass in the Flight Route ID *******
+            window.FH2.loadWayline("wayline-app-container", {
+                wayline_id: 'cb9fd988-2db6-414c-b6ee-87851869820c',
+            })
+            // ******* Step 5 - END: Load the Component and Pass in the Flight Route ID *******
+        })
+    </script>
+
+
+    <div class="btn-bar">
+        <button id="CesiumMapBtn" onclick="addCustomCesiumData()">Customize Map</button>
+        <button onclick="changeTheme()">Customize Style</button>
+    </div>
+
+    <!-- ******* Step 6 (Optional) - START: Customize Map Elements (example only) ******* -->
+    <script>
+        const CesiumMapBtn = document.getElementById('CesiumMapBtn')
+        CesiumMapBtn.style.display = 'none'
+        // Wait until the map instance is ready, and then display the map customization button
+        window.addEventListener('load', function () {
+            window.FH2.subscribe('cesium-viewer-change', (key) => {
+                if (window.FH2.cesiumViewer.global) {
+                    CesiumMapBtn.style.display = 'inline-block'
+                }
+            })
+        })
+        // Example: Customize the map, adding custom text to the map
+        function addCustomCesiumData() {
+            for (const key in window.FH2.cesiumViewer) {
+                if (Object.prototype.hasOwnProperty.call(window.FH2.cesiumViewer, key)) {
+                    const ins = window.FH2.cesiumViewer[key].entities.add({
+                        position: window.Cesium.Cartesian3.fromDegrees(113.93, 22.57, 50),
+                        label: {
+                            text: "User custom text",
+                        },
+                    })
+                }
+            }
+        }
+    </script>
+    <!-- ******* Step 6 (Optional) - END: Customize Map Elements (example only) ******* -->
+
+    <!-- ******* Step 7 (Optional) - START: Customize Theme ******* -->
+    <script>
+        function changeTheme() {
+            document.body.className = document.body.className ? '' : 'set-change-color'
+        }
+    </script>
+    <!-- ******* Step 7 (Optional) - END: Customize Theme ******* -->
+
+    <!-- ******* Step 8 (Optional) - START: Add Event Listener ******* -->
+    <script>
+        window.addEventListener('load', function () {
+            window.FH2.subscribe('wayline-cancel', () => {
+                console.log('Canceled saving flight route')
+            })
+            window.FH2.subscribe('wayline-save', () => {
+                console.log('Flight route saved')
+            })
+            window.FH2.subscribe('wayline-back', () => {
+                console.log('Flight route editor exited')
+            })
+        })
+    </script>
+    <!-- ******* Step 8 (Optional) - END: Add Event Listener ******* -->
+</body>
+
+</html>
