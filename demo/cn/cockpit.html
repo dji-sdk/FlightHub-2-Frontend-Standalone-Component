@@ -10,6 +10,7 @@
 
 - 接入步骤 6（按需） - 自定义地图元素
 - 接入步骤 7（按需） - 自定义主题
+- 接入步骤 8（按需） - 监听事件
 
 具体步骤请查看下方 demo 里标明的各个地方 -->
 
@@ -199,6 +200,18 @@
         }
     </script>
     <!-- ******* 接入步骤 7（按需） - END：自定义主题 ******* -->
+
+    <!-- 接入步骤 8（按需） - START：监听事件 -->
+     <script>
+        // 监听一键起飞后，获取飞行任务 id
+        window.FH2.subscribe('cockpit:drone-take-off', data => {
+            const {
+                flight_task_id,
+            } = data
+            console.log(flight_task_id)
+        })
+    </script>
+    <!-- 接入步骤 8（按需） - END：监听事件 -->
 </body>
 
 </html>

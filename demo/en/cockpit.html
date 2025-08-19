@@ -10,6 +10,7 @@
 
 - Step 6 (optional) - Customize map elements
 - Step 7 (optional) - Customize theme
+- Step 8 (optional) - Subscribe event
 
 Please refer to the example below for details -->
 
@@ -199,6 +200,18 @@ Please refer to the example below for details -->
         }
     </script>
     <!-- ******* Step 7 (Optional) - END: Customize Theme ******* -->
+
+    <!-- Step 8 (Optional) - START：Subscribe event -->
+     <script>
+        // After monitoring the one-key takeoff, obtain the flight mission ID
+        window.FH2.subscribe('cockpit:drone-take-off', data => {
+            const {
+                flight_task_id,
+            } = data
+            console.log(flight_task_id)
+        })
+    </script>
+    <!-- Step 8 (Optional) - END：Subscribe event -->
 </body>
 
 </html>
