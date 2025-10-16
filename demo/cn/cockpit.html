@@ -30,14 +30,60 @@
             flex-wrap: wrap;
         }
 
-        .btn-bar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 9999;
-        }
+      .test-panel {
+        position: fixed;
+        bottom: 2%;
+        left: 2%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 1;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        gap: 8px;
+        max-width: 300px;
+      }
+
+      .test-message {
+        background-color: #ccc;
+        padding: 4px;
+        border-radius: 5px;
+        word-break: break-all;
+      }
+      .test-panel-content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .test-panel-close {
+        position: absolute;
+        right: 20px;
+        top: 4px;
+      }
+      .test-panel-close::before,
+      .test-panel-close::after {
+        position: absolute;
+        content: " ";
+        background-color: #898989;
+        width: 0px;
+        height: 13px;
+        border: 1px solid;
+        left: 9px;
+        top: 2px;
+        cursor: pointer;
+      }
+      .test-panel-close::before {
+        transform: rotate(45deg);
+      }
+
+      .test-panel-close::after {
+        transform: rotate(-45deg);
+      }
+      .test-panel-open {
+        display: none;
+      }
     </style>
 
     <!-- ******* 接入步骤 1 - START：添加组件容器样式 *******  -->
@@ -125,6 +171,7 @@
 
     <script>
         const ip = '127.0.0.1'
+        let cockpit1 = null; // 可能初始化多个 驾驶舱实例
         window.addEventListener('load', function () {
             // ******* 接入步骤 4 - START：使用组件前初始化配置（具体配置参数请按实际替换） *******
             window.FH2.initConfig({
@@ -137,19 +184,60 @@
             // ******* 接入步骤 4 - END：使用组件前初始化配置（具体配置参数请按实际替换） *******
 
             // ******* 接入步骤 5 - START：加载组件，传入航线ID *******
-            window.FH2.loadCockpit("cockpit-app-container", {
+            cockpit1 = window.FH2.loadCockpit("cockpit-app-container", {
                 gateway_sn: '', // 网关 sn，按实际传入
                 drone_sn: '' // 飞机 sn，按实际传入
             });
             // ******* 接入步骤 5 - END：加载组件，传入航线ID *******
+
+            window.FH2.subscribe("cockpit:drone-take-off", (data) => {});
+            window.FH2.subscribe("cockpit:camera-take-photo", ({cameraIndex}) => {}); // 事件 emit： 照片拍摄回调，（调用时机：发送请求前）
+            window.FH2.subscribe("cockpit:camera-record-before", ({cameraIndex}) => {}); // 事件 emit： 录像开始回调
+            window.FH2.subscribe("cockpit:camera-record-after", ({cameraIndex}) => {}); // 事件 emit： 录像结束回调
+            window.FH2.subscribe("cockpit:camera-take-panoramic-before", (data) => {}); // 事件 emit： 全景照片拍摄开始回调
+            window.FH2.subscribe("cockpit:camera-take-panoramic-after", ({cameraIndex}) => {}); // 事件 emit： 全景照片拍摄强制结束回调
+
+            window.FH2.subscribe("cockpit:mounted", ({droneSn}) => {}); // 生命周期：驾驶舱挂载回调
         })
     </script>
 
 
-    <div class="btn-bar">
-        <button id="CesiumMapBtn" onclick="addCustomCesiumData()">地图定制</button>
+    <!-- *******  START：Demo ******* -->
+    <div class="test-panel">
+      <div class="test-panel-action-list">
+        <button class="test-panel-open" onclick="openDemo()">
+          打开 demo 演示
+        </button>
+        <div class="test-panel-close" onclick="closeDemo()"></div>
+      </div>
+      <div class="test-panel-content">
+        <div class="test-message">
+          <div>预览:</div>
+          <div class="message-info"></div>
+          <image class="massage-img" style="width: 100%; height: auto" />
+        </div>
+        <button id="CesiumMapBtn" onclick="addCustomCesiumData()">
+          地图定制
+        </button>
         <button onclick="changeTheme()">样式定制</button>
+        <button onclick="getVideoTypeTest()">获取 VideoType(zoom、ir、wide)</button>
+        <button onclick="captureVideoFrameTest()">主摄直播截图</button>
+      </div>
     </div>
+
+    <script>
+      function openDemo() {
+        document.querySelector(".test-panel-content").style.display = "flex";
+        document.querySelector(".test-panel-open").style.display = "none";
+        document.querySelector(".test-panel-close").style.display = "flex";
+      }
+      function closeDemo() {
+        document.querySelector(".test-panel-content").style.display = "none";
+        document.querySelector(".test-panel-open").style.display = "flex";
+        document.querySelector(".test-panel-close").style.display = "none";
+      }
+    </script>
+    <!-- *******  END：Demo ******* -->
 
     <!-- ******* 接入步骤 6（按需） - START：自定义地图元素（此为例子，具体使用场景请按实际） ******* -->
     <script>
@@ -186,6 +274,41 @@
         }
     </script>
     <!-- ******* 接入步骤 7（按需） - END：自定义主题 ******* -->
+     
+    <!-- ******* 接入步骤 8（按需） - START：事件 ******* -->
+    <script>
+       // 获取当前相机的 video 类型：红外('ir')、广角('wide')、变焦('zoom')  getVideoType
+      // 接受参数：无
+      // 返回结果：{videoType: "zoom", cameraIndex: '98-0-1'}
+      // 注意：点击按钮  或者  通过快捷键都会触发；主摄直播需要开启并且正常直播状态下才会返回有效数据；可以搭配生命周期  cockpit:mounted 使用，确保驾驶舱成功挂载后使用
+      function getVideoTypeTest() {
+        if (cockpit1.getVideoType) {
+          const data = cockpit1.getVideoType();
+          document.querySelector(
+            ".message-info"
+          ).innerText = `视频类型：${JSON.stringify(data)}`;
+        }
+      }
+
+      // 主摄直播画面截图 captureVideoFrame
+      // 接受参数： 可选，{format: 'image/png', quality: 1}  默认值为 'image/png' 和 1，值参考 https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/toDataURL
+      // 返回结果： {cameraIndex: '', imageUrl: '‘}  imageUrl 为 base64 数据r
+      // 注意：主摄直播需要开启并且正常直播状态下才会返回有效数据；可以搭配生命周期  cockpit:mounted 使用，确保驾驶舱成功挂载后使用
+      function captureVideoFrameTest() {
+        if (cockpit1.captureVideoFrame) {
+          const data = cockpit1.captureVideoFrame();
+          document.querySelector(
+            ".message-info"
+          ).innerText = `截图：${JSON.stringify({
+            imageUrl: data.imageUrl.slice(0, 15),
+            cameraIndex: data.cameraIndex,
+          })}`;
+          document.querySelector(".massage-img").src = data.imageUrl;
+        }
+      }
+
+    </script>
+    <!-- ******* 接入步骤 8（按需） - END：事件 ******* -->
 </body>
 
 </html>
