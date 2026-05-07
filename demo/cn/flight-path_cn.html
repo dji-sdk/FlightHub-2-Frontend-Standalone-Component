@@ -1,0 +1,189 @@
+<!-- 步骤：
+* 将示例中的 IP 地址 47.96.144.147 替换为实际服务地址 *
+- 步骤 1 - 添加组件容器样式
+- 步骤 2 - 加载 paas.js 文件
+- 步骤 3 - 提供组件容器
+- 步骤 4 - 在加载组件前初始化配置
+- 步骤 5 - 加载组件
+- 步骤 6（可选）- 自定义地图元素
+- 步骤 7（可选）- 自定义主题
+- 步骤 8（可选）- 添加事件监听器
+详情请参考以下示例 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlightPath</title>
+  <style>
+    body,
+    html {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .btn-bar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 9999;
+    }
+  </style>
+  <!-- ******* 步骤 1 - 开始：添加组件容器样式 *******  -->
+  <style>
+    .fh2-container {
+      display: flex;
+      flex-direction: column;
+      /* 设置要加载组件的容器的宽度和高度 */
+      height: 80vh;
+      width: 80vw;
+    }
+    #project-app-container>div,
+    .map-app-container>div {
+      width: 100%;
+      height: 100%;
+    }
+    .project-details {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex: 1;
+      overflow: auto;
+    }
+    .project-details .right-micro-app {
+      position: relative;
+      display: flex;
+      flex: 1;
+    }
+    .project-details .right-micro-app .maps-micro-app {
+      display: flex;
+      flex: 1;
+    }
+    .project-details .right-micro-app .map-app-placeholder {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-details .right-micro-app .map-app-container {
+      height: 100%;
+    }
+    .project-details .right-micro-app #wayline-app-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50%;
+      height: 50%;
+      pointer-events: none;
+    }
+  </style>
+  <!-- ******* 步骤 1 - 结束：添加组件容器样式 *******  -->
+  <!-- ******* 步骤 2 - 开始：加载 paas.js 文件（替换为实际域名地址） ******* -->
+  <script src="http://127.0.0.1/paas.js" fh2></script>
+  <!-- ******* 步骤 2 - 结束：加载 paas.js 文件（替换为实际域名地址） ******* -->
+  <!-- ******* 步骤 7（可选）- 开始：自定义主题 ******* -->
+  <link href="./custom-style.css" rel="stylesheet">
+  <!-- ******* 步骤 7（可选）- 结束：自定义主题 ******* -->
+</head>
+<body>
+  <!-- ******* 步骤 3 - 开始：提供组件容器 ******* -->
+  <div id="fh2-container" class="fh2-container">
+    <div id="wayline-header"></div>
+    <div class="project-details">
+      <div id="project-app-container"></div>
+      <div id="project-middle-container"></div>
+      <div id="project-right-micro-app" class="right-micro-app">
+        <div class="maps-micro-app">
+          <div id="project-map-app-placeholder" class="map-app-placeholder">
+            <div id="map-app-global" class="map-app-container"></div>
+          </div>
+        </div>
+        <!-- <div id="wayline-app-container"></div> -->
+      </div>
+    </div>
+  </div>
+  <!-- ******* 步骤 3 - 结束：提供组件容器 ******* -->
+  <script>
+    window.addEventListener('load',function () {
+      // ******* 步骤 4 - 开始：在加载组件前初始化配置（根据需要替换参数） *******
+      window.FH2.initConfig({
+        serverUrl: 'http://127.0.0.1:30812',
+        wssUrl: 'ws://127.0.0.1:30812/duplex/web',
+        hostUrl: 'http://127.0.0.1',
+        prjId: '1dcac397-67eb-4626-9274-492c4701a4628',
+        projectToken: 'eyJhbGciOiJIUzUxM2iIsImNyaXQiOlsidHlwIiwiYWxnIiwia2lkIl0sImtpZCI6IjU3YmQyNmEwLTYyMDktNGE5My1hNjg4LWY4NzUyYmU1ZDE5MSIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoiIiwiZXhwIjoyMDY5MzgxMDYxLCJuYmYiOjE3NTM4NDgyNjEsIm9yZ2FuaXphdGlvbl91dWlkIjoiMGJhMDc5YzUtN2Q5Yi00YzVkLWEwY2UtNjA5YmUyODhkNjg0IiwicHJvamVjdF91dWlkIjoiIiwic3ViIjoiZmgyIiwidXNlcl9pZCI6IjE3NTM4NDQ2MjM4MzUxMTUwOTUifQ.om7W1uOWNtN1nyRVh2xAIWa5wkA3SYMxrT-uM13PtlS9XvYJgNCz6tpWbafjYfTk3GEzajCUoK9fdqUX7fYUVw'
+        // projectToken: 'eyJhbGciOiJIUzUxMiIsImNyaXQiOlsidHlwIiwiYWxnIiwia2lkIl0sImtpZCI6IjU3YmQyNmEwLTYyMDktNGE5My1hNjg4LWY4NzUyYmU1ZDE5MSIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoiZGFycm9uIiwiZXhwIjoyMDYzMzQxOTQ3LCJuYmYiOjE3NDc4MDkxNDcsIm9yZ2FuaXphdGlvbl91dWlkIjoiNWRmZjI3YmQtNjkzYy00YWNlLTk3OWQtZTI2ZTkyMGQ0OTdhIiwicHJvamVjdF91dWlkIjoiIiwic3ViIjoiZmgyIiwidXNlcl9pZCI6IjE3NDI5ODI1NTkxNDAwMzc0NDcifQ.PIQbQUqvMvayi6UDhAVMJQJzTH2PWJnRaCwwktPnlQU5nEE7SNnP7_rJMvPcti4WTq0j7p9OibK9V4sAKozZxg'
+      })
+      // ******* 步骤 4 - 结束：在加载组件前初始化配置（根据需要替换参数） *******
+      // ******* 步骤 5 - 开始：加载组件并传入飞行路径 ID *******
+      window.FH2.loadFlightPath("project-app-container",{
+        flight_path_id: '067082853-1da5-455c-b1f3-e1a99e68d219',
+      })
+      // ******* 步骤 5 - 结束：加载组件并传入飞行路径 ID *******
+      // ******* 步骤 6 - 开始：点击返回图标时订阅飞行路径返回事件 *******
+      window.FH2.subscribe('flight-path-back',() => {
+        window.FH2.destroyFlightPath()
+      })
+      // ******* 步骤 5 - 结束：点击返回图标时订阅飞行路径返回事件 *******
+    })
+  </script>
+
+  <div class="btn-bar">
+    <button id="CesiumMapBtn" onclick="addCustomCesiumData()">Customize Map</button>
+    <button onclick="changeTheme()">Customize Style</button>
+  </div>
+  <!-- ******* 步骤 6（可选）- 开始：自定义地图元素（仅示例） ******* -->
+  <script>
+    const CesiumMapBtn = document.getElementById('CesiumMapBtn')
+    CesiumMapBtn.style.display = 'none'
+    // 等待地图实例就绪，然后显示地图自定义按钮
+    window.addEventListener('load',function () {
+      window.FH2.subscribe('cesium-viewer-change',(key) => {
+        if (window.FH2.cesiumViewer.global) {
+          CesiumMapBtn.style.display = 'inline-block'
+        }
+      })
+    })
+    // 示例：自定义地图，向地图添加自定义文本
+    function addCustomCesiumData () {
+      for (const key in window.FH2.cesiumViewer) {
+        if (Object.prototype.hasOwnProperty.call(window.FH2.cesiumViewer,key)) {
+          const ins = window.FH2.cesiumViewer[key].entities.add({
+            position: window.Cesium.Cartesian3.fromDegrees(113.93,22.57,50),
+            label: {
+              text: "User custom text",
+            },
+          })
+        }
+      }
+    }
+  </script>
+  <!-- ******* 步骤 6（可选）- 结束：自定义地图元素（仅示例） ******* -->
+  <!-- ******* 步骤 7（可选）- 开始：自定义主题 ******* -->
+  <script>
+    function changeTheme () {
+      document.body.className = document.body.className ? '' : 'set-change-color'
+    }
+  </script>
+  <!-- ******* 步骤 7（可选）- 结束：自定义主题 ******* -->
+  <!-- ******* 步骤 8（可选）- 开始：添加事件监听器 ******* -->
+  <script>
+    window.addEventListener('load',function () {
+      window.FH2.subscribe('wayline-cancel',() => {
+        console.log('Canceled saving flight route')
+      })
+      window.FH2.subscribe('wayline-save',() => {
+        console.log('Flight route saved')
+      })
+      window.FH2.subscribe('wayline-back',() => {
+        console.log('Flight route editor exited')
+      })
+    })
+  </script>
+  <!-- ******* 步骤 8（可选）- 结束：添加事件监听器 ******* -->
+</body>
+</html>
